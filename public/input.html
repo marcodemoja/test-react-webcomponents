@@ -1,0 +1,115 @@
+<style>
+wc-input{position:relative;margin-top:40px;display:inline-block}wc-input label,wc-input small{position:absolute;left:0;text-transform:uppercase;font-size:12.8px;color:#7f8282;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}wc-input label{z-index:-1;bottom:44px;transition:bottom .2s;line-height:1}wc-input small{bottom:-16px}wc-input:not([value]) label,wc-input[value=''] label{top:auto;bottom:3px}wc-input input{font-size:16px;font-family:inherit;background:#e5e6e7;border-radius:4px;border:none;height:40px;padding:16px;color:#4c4e50}wc-input input::-webkit-input-placeholder{color:#4c4e50}wc-input input::-moz-placeholder{color:#4c4e50}wc-input input:-ms-input-placeholder{color:#4c4e50}wc-input input::placeholder{color:#4c4e50}wc-input input:focus{outline:none;border:none;box-shadow:0 0 0 1px #a7a9aa}wc-input input:disabled,wc-input input[disabled]{color:#a7a9aa}wc-input input[disabled]::-webkit-input-placeholder{color:#a7a9aa}wc-input input[disabled]::-moz-placeholder{color:#a7a9aa}wc-input input[disabled]:-ms-input-placeholder{color:#a7a9aa}wc-input input[disabled]::placeholder{color:#a7a9aa}wc-input[warning] input{background:#fcf0d4}wc-input[warning] input:focus{box-shadow:0 0 0 1px #c37c22}wc-input[warning] small{color:#c37c22}wc-input[error] input{background:#fce2df}wc-input[error] input:focus{box-shadow:0 0 0 1px #ad2927}wc-input[error] small{color:#ad2927}wc-input[type=search] svg{position:absolute;fill:#4c4e50;width:16px;height:16px;bottom:12px;right:8px}wc-input[type=search] svg #search-icon{display:none}wc-input[type=search] svg #clear-icon{display:block}wc-input[type=search] input{padding-right:28px}wc-input[type=search] input::-webkit-search-cancel-button{-webkit-appearance:none}wc-input[type=search]:not([value]) #search-icon,wc-input[type=search][value=''] #search-icon{display:block}wc-input[type=search]:not([value]) #clear-icon,wc-input[type=search][value=''] #clear-icon{display:none}
+</style>
+
+<template>
+    <label></label>
+    <input>
+</template>
+
+<svg version="1.1" id="searchIcon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+     width="32px" height="32px" viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
+    <title>Search icon</title>
+    <path id="search-icon" d="M0,12.263c0,6.777,6.082,12.262,12.461,12.262c2.394,0,5.684-0.798,7.477-2.095L28.912,32l2.989-3.189
+    l-8.971-9.57c1.297-1.992,1.992-4.386,1.992-6.878C24.923,5.483,18.743,0,12.461,0C6.082,0,0,5.483,0,12.263z M2.991,12.263
+    c0-4.985,4.785-9.072,9.471-9.072c4.687,0,9.471,4.087,9.471,9.072s-4.784,9.072-9.471,9.072
+    C7.776,21.234,2.991,17.248,2.991,12.263z"/>
+    <path id="clear-icon" d="M8.883 21.298l12.539-12.539 1.886 1.886-12.539 12.539-1.886-1.886zM8.743 10.582l1.886-1.886 12.539 12.539-1.886 1.886-12.539-12.539zM16 32c-8.8 0-16-7.2-16-16s7.2-16 16-16 16 7.2 16 16-7.2 16-16 16zM16 2.667c-7.333 0-13.333 6-13.333 13.333s6 13.333 13.333 13.333 13.333-6 13.333-13.333-6-13.333-13.333-13.333z"></path>
+</svg>
+
+<script>
+(function() {
+    var thisDoc = (document._currentScript || document.currentScript).ownerDocument;
+    var element = Object.create(HTMLElement.prototype);
+
+
+    element.createdCallback = function() {
+        var elem = this,
+            idValue = elem.getAttribute('id'),
+            labelValue = elem.getAttribute('label'),
+            typeValue = elem.getAttribute('type'),
+            valueValue = elem.getAttribute('value'),
+            placeholderValue = elem.getAttribute('placeholder'),
+            descriptionValue = elem.getAttribute('description'),
+            warningValue = elem.getAttribute('warning'),
+            errorValue = elem.getAttribute('error');
+
+        elem.appendChild(document.importNode(thisDoc.querySelector('template').content, true));
+        if(typeValue == 'search' && valueValue == ''){
+            elem.appendChild(document.importNode(thisDoc.querySelector('#searchIcon'), true));
+            console.log('1');
+        }else if (typeValue == 'search' && valueValue != ''){
+            elem.appendChild(document.importNode(thisDoc.querySelector('#searchClearIcon'), true));
+            console.log('2');
+        }
+
+        var label = elem.querySelector('label'),
+            input = elem.querySelector('input');
+
+        label.innerText = labelValue;
+        label.setAttribute('for', idValue);
+        input.setAttribute('id', idValue);
+        input.setAttribute('type', typeValue);
+        input.setAttribute('value', valueValue);
+        input.setAttribute('placeholder', placeholderValue || labelValue);
+
+        input.oninput = function() {
+            input.setAttribute('value', input.value);
+            elem.setAttribute('value', input.value);
+        }
+
+        if(elem.hasAttribute('disabled')){
+            input.setAttribute('disabled', '');
+        }
+
+       var appendSmallText = function(){
+            small.appendChild(text);
+            elem.appendChild(small);
+       }
+
+        var small = document.createElement("small");
+        if(elem.hasAttribute('error')){
+            var text = document.createTextNode(errorValue);
+            appendSmallText()
+        } else if (elem.hasAttribute('warning')){
+            var text = document.createTextNode(warningValue);
+            appendSmallText()
+        } else if (elem.hasAttribute('description')){
+            var text = document.createTextNode(descriptionValue);
+            appendSmallText()
+        } else {
+            // Do nothing
+        }
+
+        if(typeValue == 'search'){
+            var icon = elem.querySelector("svg");
+            icon.onclick = function(){
+                elem.setAttribute('value', '');
+            }
+        }
+    };
+
+    element.attachedCallback = function() {};
+
+    element.detachedCallback = function() {};
+
+    element.attributeChangedCallback = function(attr, oldVal, newVal) {
+        if (attr == 'value'){
+            this.querySelector('input').setAttribute('value', newVal);
+            this.querySelector('input').value = newVal;
+        }
+
+        console.log('Attribute: ' + attr + ' New Value: ' + newVal + ' Old Value: ' + oldVal);
+
+        if(attr === 'disabled' && oldVal == null){
+            this.querySelector('input').setAttribute('disabled', newVal);
+        } else {
+            this.querySelector('input').removeAttribute('disabled');
+        }
+    };
+
+    document.registerElement('wc-input', {
+        prototype: element
+    });
+}());
+</script>
